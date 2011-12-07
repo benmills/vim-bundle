@@ -1,0 +1,77 @@
+#!/usr/bin/ruby
+
+bundle_path = "~/.vim/bundle"
+
+def usage
+  puts "usage: vim-bundle <command>"
+  puts ""
+  puts "  \033[36mlist \033[0m- list all bundles currently installed"
+  puts "  \033[36minstall <github user>/<repository name> \033[0m- installs plugin from github. If no user is specified vim-scripts is used"
+  puts "  \033[36mupdate <github user>/<repository name> \033[0m- updates plugin. If no user is specified vim-scripts is used"
+end
+
+if ARGV.first == "list"
+  puts `ls #{bundle_path}`
+elsif ARGV.first == "--help" || ARGV.first == "-h" || ARGV.first == "help"
+  usage
+elsif ARGV.size > 1
+  command = ARGV.first
+  unless command == "install" || command == "update"
+    puts "Invalid command"
+    usage
+    exit
+  end
+
+  split = ARGV[1].split("/")
+
+  if split.size > 1
+    plugin_name = split[1]
+    download_url = "https://github.com/#{ARGV[1]}/tarball/master"
+  else
+    plugin_name = ARGV.first
+    download_url = "https://github.com/vim-scripts/#{ARGV[1]}/tarball/master"
+  end
+
+  plugin_path = bundle_path + "/" + plugin_name
+  if command == "update"
+    old_plugin_path = plugin_path
+    plugin_path += "-new"
+  end
+  plugin_tar = plugin_path + ".tar"
+
+  if File.exists? File.expand_path(plugin_path)
+    puts "Plugin exists #{plugin_path}"
+    exit
+  end
+
+  http_status_code = `curl -sL -w "%{http_code} %{url_effective}\\n" "#{download_url}" -o /dev/null | awk '{ print $1 }'`.strip.to_i
+  if http_status_code == 404
+    puts "Download failed with status #{http_status_code} for URL:"
+    puts download_url
+    exit()
+  end
+
+  puts ">> Downloading from #{download_url}"
+  `wget -q -O #{plugin_tar} #{download_url}`
+
+  unless File.exists?(File.expand_path(plugin_tar))
+    puts plugin_tar
+    puts "\033[31mFailed to download tar"
+    exit
+  end
+
+  puts ">> Decompressing plugin to #{plugin_path}"
+  `mkdir #{plugin_path} && tar -C #{plugin_path} -xzvf #{plugin_tar} --strip-components=1 && rm #{plugin_tar}`
+
+  if command == "update"
+    puts ">> Removing old plugin"
+    `rm -r #{old_plugin_path}`
+    puts ">> Moving new plugin"
+    `mv #{plugin_path} #{old_plugin_path}`
+    puts "\033[32m#{plugin_name} is now updated!"
+  else
+    puts "\033[32m#{plugin_name} is now installed!"
+  end
+else
+  usage
+end
