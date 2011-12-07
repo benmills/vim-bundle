@@ -3,22 +3,23 @@ Install and update vim plugins using pathogen from the command line.
 
 ## Usage
 
-*Install a new plugin*
+#### Install a new plugin
 `vim-bundle install tpope/vim-rails`
 
-*Update a plugin*
+#### Update a plugin
 `vim-bundle update scrooloose/nerdtree`
+
+#### List all installed plugins
+`vim-bundle list`
 
 Both `install` and `update` will take a github user followed by the repository
 name and install the master of that git repo into `~/.vim/bundle/`. If you
 leave off the github username it will use the github mirror of vim-scripts'
 username.
 
-*List all installed plugins*
-`vim-bundle list`
 
 ## Installation
 
 Move `vim-bundle` into your `PATH`. Personally I add `$HOME/.bin` to my
-(path)[https://github.com/benmills/dotfiles/blob/master/zsh/config#L5] and keep
+[path](https://github.com/benmills/dotfiles/blob/master/zsh/config#L5) and keep
 `vim-bundle` inside the `.bin` folder.
