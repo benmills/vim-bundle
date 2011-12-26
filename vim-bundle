@@ -28,7 +28,7 @@ elsif ARGV.size > 1
     plugin_name = split[1]
     download_url = "https://github.com/#{ARGV[1]}/tarball/master"
   else
-    plugin_name = ARGV.first
+    plugin_name = ARGV[1]
     download_url = "https://github.com/vim-scripts/#{ARGV[1]}/tarball/master"
   end
 
