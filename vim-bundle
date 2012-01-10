@@ -24,12 +24,18 @@ elsif ARGV.size > 1
 
   split = ARGV[1].split("/")
 
+  if ARGV[2]
+    branch = ARGV[2]
+  else
+    branch = "master"
+  end
+
   if split.size > 1
     plugin_name = split[1]
-    download_url = "https://github.com/#{ARGV[1]}/tarball/master"
+    download_url = "https://github.com/#{ARGV[1]}/tarball/#{branch}"
   else
     plugin_name = ARGV[1]
-    download_url = "https://github.com/vim-scripts/#{ARGV[1]}/tarball/master"
+    download_url = "https://github.com/vim-scripts/#{ARGV[1]}/tarball/#{branch}"
   end
 
   plugin_path = bundle_path + "/" + plugin_name
